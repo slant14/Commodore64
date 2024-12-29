@@ -17,9 +17,15 @@ struct Mem {
         }
     }
 
+    // Read one byte
     Byte operator[](u32 address) const {
         
         // assert here the address is < MAX_MEM
+        return data[address];
+    }
+
+    // Write one byte
+    Byte& operator[](u32 address) {
         return data[address];
     }
 };
@@ -48,7 +54,7 @@ struct CPU {
         memory.init();
     }
 
-    Byte fetchByte(u32 cycles, Mem& memory) {
+    Byte fetchByte(u32& cycles, Mem& memory) {
         
         Byte data = memory[PC]; // Byte data = memory[PC--];
         ++PC;                   // uncomment the upper line and delete this line
@@ -56,10 +62,26 @@ struct CPU {
         return data;
     }
 
+    // Instruction opcodes
+    static constexpr Byte 
+        INS_LDA_IM = 0xA9;
+
     void execute(u32 cycles, Mem& memory) {
 
         while (cycles > 0) {
             Byte instruction = fetchByte(cycles, memory);
+            
+            switch (instruction) {
+                case INS_LDA_IM: {
+                    Byte value = fetchByte(cycles, memory);
+                    A = value;
+                    Z = (A == 0);
+                    N = (A & 0b10000000) > 0;
+                } break;
+                default: {
+                    printf("Unknown instruction : %d\n", instruction);
+                } break;
+            }
         }
     }
 
@@ -69,8 +91,15 @@ int main() {
     
     Mem mem;
     CPU cpu;
+    // Test
+    
     cpu.reset(mem);
+    mem[0xFFFC] = CPU::INS_LDA_IM;
+    mem[0xFFFD] = 0x69;
+
     cpu.execute(2, mem);
 
+    printf ("%x\n", mem[0xFFFC]);
+    printf ("%x\n", mem[0xFFFD]);
     return 0;
 }

@@ -9,12 +9,18 @@ using u32 = unsigned int;
 
 struct Mem {
     static constexpr u32 MAX_MEM = 1024 * 64;
-    Byte Data[MAX_MEM];
+    Byte data[MAX_MEM];
 
     void init() {
         for (u32 i = 0; i < MAX_MEM; i++) {
-            Data[i] = 0;
+            data[i] = 0;
         }
+    }
+
+    Byte operator[](u32 address) const {
+        
+        // assert here the address is < MAX_MEM
+        return data[address];
     }
 };
 
@@ -32,7 +38,7 @@ struct CPU {
     Byte V : 1; // Status flag
     Byte N : 1; // Status flag
 
-    void reset(Mem memory) {
+    void reset(Mem& memory) {
         PC = 0xFFFC;
         SP = 0x0100;
 
@@ -42,6 +48,21 @@ struct CPU {
         memory.init();
     }
 
+    Byte fetchByte(u32 cycles, Mem& memory) {
+        
+        Byte data = memory[PC]; // Byte data = memory[PC--];
+        ++PC;                   // uncomment the upper line and delete this line
+        --cycles;
+        return data;
+    }
+
+    void execute(u32 cycles, Mem& memory) {
+
+        while (cycles > 0) {
+            Byte instruction = fetchByte(cycles, memory);
+        }
+    }
+
 };
 
 int main() {
@@ -49,6 +70,7 @@ int main() {
     Mem mem;
     CPU cpu;
     cpu.reset(mem);
+    cpu.execute(2, mem);
 
     return 0;
 }

@@ -62,9 +62,22 @@ struct CPU {
         return data;
     }
 
+    Byte readByte(u32& cycles, Byte address, Mem& memory) {
+        Byte data = memory[address];
+        --cycles;
+        return data;
+    }
+
     // Instruction opcodes
     static constexpr Byte 
-        INS_LDA_IM = 0xA9;
+        INS_LDA_IM = 0xA9,
+        INS_LDA_ZP = 0XA5;
+
+    void LDASetStatusFlags() {
+        Z = (A == 0);
+        N = (A & 0b10000000) > 0;
+    }
+
 
     void execute(u32 cycles, Mem& memory) {
 
@@ -75,8 +88,12 @@ struct CPU {
                 case INS_LDA_IM: {
                     Byte value = fetchByte(cycles, memory);
                     A = value;
-                    Z = (A == 0);
-                    N = (A & 0b10000000) > 0;
+                    LDASetStatusFlags();
+                } break;
+                case INS_LDA_ZP: {
+                    Byte zeroPageAddress = fetchByte(cycles, memory);
+                    A = readByte(cycles, zeroPageAddress, memory);
+                    LDASetStatusFlags();
                 } break;
                 default: {
                     printf("Unknown instruction : %d\n", instruction);
@@ -91,11 +108,13 @@ int main() {
     
     Mem mem;
     CPU cpu;
-    // Test
     
     cpu.reset(mem);
+    
+    // Test program
     mem[0xFFFC] = CPU::INS_LDA_IM;
     mem[0xFFFD] = 0x69;
+    mem[0x0069] = 0x85;
 
     cpu.execute(2, mem);
 

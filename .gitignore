@@ -1,0 +1,62 @@
+# Compiled object files
+*.o
+*.obj
+
+# Compiled binary files
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+
+# Compiler-generated files
+*.dSYM/
+*.stackdump
+
+# Build directories
+build/
+dist/
+bin/
+obj/
+Debug/
+Release/
+
+# Dependency directories
+*.dep
+*.d
+
+# IDE-specific files
+# CLion
+.idea/
+cmake-build-debug/
+cmake-build-release/
+
+# Visual Studio
+.vscode/
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+*.sln
+*.opensdf
+*.suo
+ipch/
+*.pdb
+
+# Eclipse
+.settings/
+.cproject
+.project
+
+# Code::Blocks
+*.cbp
+*.depend
+*.layout
+
+# General OS files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+

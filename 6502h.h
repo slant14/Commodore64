@@ -89,7 +89,8 @@ struct CPU {
         INS_LDA_ZPX = 0xB5,
         INS_JSR = 0x20,
         INS_LDA_ABS = 0xAD,
-        INS_LDA_ABSX = 0xBD;
+        INS_LDA_ABSX = 0xBD,
+        INS_LDA_ABSY = 0xB9;
 
     void LDASetStatusFlags() {
         Z = (A == 0);
@@ -130,6 +131,14 @@ struct CPU {
                     A = readByte(cycles, absAddressX, memory);
                     // check if the pages cross
                     if (absAddressX - absoluteAddress >= 0xFF) 
+                        --cycles;
+                } break;
+                case INS_LDA_ABSY: {
+                    Word absoluteAddress = fetchByte(cycles, memory);
+                    Word absAddressY = absoluteAddress + Y;
+                    A = readByte(cycles, absAddressY, memory);
+                    // check if the pages cross
+                    if (absAddressY - absoluteAddress >= 0xFF)
                         --cycles;
                 } break;
                 case INS_JSR: {

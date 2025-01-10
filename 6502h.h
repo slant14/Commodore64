@@ -61,7 +61,7 @@ struct CPU {
         memory.init();
     }
 
-    Byte fetchByte(u32& cycles, Mem& memory) {
+    Word fetchByte(u32& cycles, Mem& memory) {
         
         Byte data = memory[PC]; // Byte data = memory[PC--];
         ++PC;                   // uncomment the upper line and delete this line
@@ -88,7 +88,8 @@ struct CPU {
         INS_LDA_ZP = 0xA5,
         INS_LDA_ZPX = 0xB5,
         INS_JSR = 0x20,
-        INS_LDA_ABS = 0xAD;
+        INS_LDA_ABS = 0xAD,
+        INS_LDA_ABSX = 0xBD;
 
     void LDASetStatusFlags() {
         Z = (A == 0);
@@ -122,6 +123,14 @@ struct CPU {
                 case INS_LDA_ABS: {
                     Word absoluteAddress = fetchByte(cycles, memory);
                     A = readByte(cycles, absoluteAddress, memory);
+                } break;
+                case INS_LDA_ABSX: {
+                    Word absoluteAddress = fetchByte(cycles, memory);
+                    Word absAddressX = absoluteAddress + X;
+                    A = readByte(cycles, absAddressX, memory);
+                    // check if the pages cross
+                    if (absAddressX - absoluteAddress >= 0xFF) 
+                        --cycles;
                 } break;
                 case INS_JSR: {
                     Word subRutineAddress = fetchWord(cycles, memory);

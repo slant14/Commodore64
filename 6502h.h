@@ -87,7 +87,8 @@ struct CPU {
         INS_LDA_IM = 0xA9,
         INS_LDA_ZP = 0xA5,
         INS_LDA_ZPX = 0xB5,
-        INS_JSR = 0x20;
+        INS_JSR = 0x20,
+        INS_LDA_ABS = 0xAD;
 
     void LDASetStatusFlags() {
         Z = (A == 0);
@@ -117,6 +118,10 @@ struct CPU {
                     --cycles;
                     A = readByte(cycles, zeroPageAddress, memory);
                     LDASetStatusFlags();
+                } break;
+                case INS_LDA_ABS: {
+                    Word absoluteAddress = fetchByte(cycles, memory);
+                    A = readByte(cycles, absoluteAddress, memory);
                 } break;
                 case INS_JSR: {
                     Word subRutineAddress = fetchWord(cycles, memory);

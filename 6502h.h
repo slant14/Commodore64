@@ -133,11 +133,11 @@ struct CPU {
                     LDASetStatusFlags();
                 } break;
                 case INS_LDA_ABS: {
-                    Word absoluteAddress = fetchByte(cycles, memory);
+                    Word absoluteAddress = fetchWord(cycles, memory);
                     A = readByte(cycles, absoluteAddress, memory);
                 } break;
                 case INS_LDA_ABSX: {
-                    Word absoluteAddress = fetchByte(cycles, memory);
+                    Word absoluteAddress = fetchWord(cycles, memory);
                     Word absAddressX = absoluteAddress + X;
                     A = readByte(cycles, absAddressX, memory);
                     // check if the pages cross
@@ -145,7 +145,7 @@ struct CPU {
                         --cycles;
                 } break;
                 case INS_LDA_ABSY: {
-                    Word absoluteAddress = fetchByte(cycles, memory);
+                    Word absoluteAddress = fetchWord(cycles, memory);
                     Word absAddressY = absoluteAddress + Y;
                     A = readByte(cycles, absAddressY, memory);
                     // check if the pages cross

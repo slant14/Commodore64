@@ -43,13 +43,13 @@ struct CPU {
              
     Byte A, X, Y; // Register
     
-    Byte C : 1; // Status flag
-    Byte Z : 1; // Status flag
-    Byte I : 1; // Status flag
-    Byte D : 1; // Status flag
-    Byte B : 1; // Status flag
-    Byte V : 1; // Status flag
-    Byte N : 1; // Status flag
+    Byte C : 1; // Carry flag
+    Byte Z : 1; // Zero flag
+    Byte I : 1; // Intrupt disable flag
+    Byte D : 1; // Decimal mode flag
+    Byte B : 1; // Break flag
+    Byte V : 1; // oVerflow flag
+    Byte N : 1; // Negative flag
 
     void reset(Mem& memory) {
         PC = 0xFFFC;

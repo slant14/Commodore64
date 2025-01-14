@@ -75,6 +75,14 @@ struct CPU {
         cycles -= 2;
         return data;
     }
+    
+
+    Word readWord(u32& cycles, Word address, Mem& memory) {
+        Byte lowBytes = readByte(cycles, address, memory);
+        Byte highBytes = readByte(cycles, address + 1, memory);
+
+        return lowBytes | (highBytes << 8);
+    }
 
     Byte readByte(u32& cycles, Byte address, Mem& memory) {
         Byte data = memory[address];
@@ -90,7 +98,10 @@ struct CPU {
         INS_JSR = 0x20,
         INS_LDA_ABS = 0xAD,
         INS_LDA_ABSX = 0xBD,
-        INS_LDA_ABSY = 0xB9;
+        INS_LDA_ABSY = 0xB9,
+        INS_LDA_INDX = 0xA1,
+        INS_LDA_INDY = 0xA2;
+
 
     void LDASetStatusFlags() {
         Z = (A == 0);
@@ -140,6 +151,19 @@ struct CPU {
                     // check if the pages cross
                     if (absAddressY - absoluteAddress >= 0xFF)
                         --cycles;
+                } break;
+                case INS_LDA_INDX: {
+                    Byte zeroPageAddress = fetchByte(cycles, memory);
+                    zeroPageAddress += X;
+                    --cycles;
+                    Word effectiveAddress = readWord(cycles, zeroPageAddress, memory);
+                    A = readByte(cycles, effectiveAddress, memory);
+                } break;
+                case INS_LDA_INDY: {
+                    Byte zeroPageAddress = fetchByte(cycles, memory);
+                    zeroPageAddress += Y;
+                    Word effectiveAddress = readWord(cycles, zeroPageAddress, memory);
+                    A = readByte(cycles, effectiveAddress, memory); 
                 } break;
                 case INS_JSR: {
                     Word subRutineAddress = fetchWord(cycles, memory);

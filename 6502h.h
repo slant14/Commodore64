@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+namespace m6502 {
+    using Byte = unsigned char;
+    using Word = unsigned short;
+    using u32 = unsigned int;
+    using s32 = signed int;
 
-using Byte = unsigned char;
-using Word = unsigned short;
-
-using u32 = unsigned int;
-
-struct Mem {
+    struct Mem;
+    struct CPU;
+}
+struct m6502::Mem {
     static constexpr u32 MAX_MEM = 1024 * 64;
     Byte data[MAX_MEM];
 
@@ -37,7 +40,7 @@ struct Mem {
 
 };
 
-struct CPU {
+struct m6502::CPU {
     Word PC; // program counter
     Word SP; // stack pointer
              

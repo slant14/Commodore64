@@ -96,6 +96,8 @@ struct m6502::CPU {
     // Instruction opcodes
     static constexpr Byte 
         INS_LDA_IM = 0xA9,
+        INS_LDA_IMX = 0xA2,
+        INS_LDA_IMY = 0xA0,
         INS_LDA_ZP = 0xA5,
         INS_LDA_ZPX = 0xB5,
         INS_JSR = 0x20,
@@ -106,9 +108,9 @@ struct m6502::CPU {
         INS_LDA_INDY = 0xA2;
 
 
-    void LDASetStatusFlags() {
-        Z = (A == 0);
-        N = (A & 0b10000000) > 0;
+    void LoadRegisterSetStatus(Byte reg) {
+        Z = (reg == 0);
+        N = (reg & 0b10000000) > 0;
     }
 
 
@@ -121,19 +123,19 @@ struct m6502::CPU {
                 case INS_LDA_IM: {
                     Byte value = fetchByte(cycles, memory);
                     A = value;
-                    LDASetStatusFlags();
+                    LoadRegisterSetStatus(A);
                 } break;
                 case INS_LDA_ZP: {
                     Byte zeroPageAddress = fetchByte(cycles, memory);
                     A = readByte(cycles, zeroPageAddress, memory);
-                    LDASetStatusFlags();
+                    LoadRegisterSetStatus(A);
                 } break;
                 case INS_LDA_ZPX: {
                     Byte zeroPageAddress = fetchByte(cycles, memory);
                     zeroPageAddress += X;
                     --cycles;
                     A = readByte(cycles, zeroPageAddress, memory);
-                    LDASetStatusFlags();
+                    LoadRegisterSetStatus(A);
                 } break;
                 case INS_LDA_ABS: {
                     Word absoluteAddress = fetchWord(cycles, memory);

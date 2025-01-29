@@ -147,6 +147,7 @@ struct m6502::CPU {
                 case INS_LDA_ABS: {
                     Word absoluteAddress = fetchWord(cycles, memory);
                     A = readByte(cycles, absoluteAddress, memory);
+                    loadRegisterSetStatus(A);
                 } break;
                 case INS_LDA_ABSX: {
                     Word absoluteAddress = fetchWord(cycles, memory);
@@ -155,6 +156,7 @@ struct m6502::CPU {
                     // check if the pages cross
                     if (absAddressX - absoluteAddress >= 0xFF) 
                         --cycles;
+                    loadRegisterSetStatus(A);
                 } break;
                 case INS_LDA_ABSY: {
                     Word absoluteAddress = fetchWord(cycles, memory);
@@ -163,6 +165,8 @@ struct m6502::CPU {
                     // check if the pages cross
                     if (absAddressY - absoluteAddress >= 0xFF)
                         --cycles;
+
+                    loadRegisterSetStatus(A);
                 } break;
                 case INS_LDA_INDX: {
                     Byte zeroPageAddress = fetchByte(cycles, memory);
@@ -170,12 +174,14 @@ struct m6502::CPU {
                     --cycles;
                     Word effectiveAddress = readWord(cycles, zeroPageAddress, memory);
                     A = readByte(cycles, effectiveAddress, memory);
+                    loadRegisterSetStatus(A);
                 } break;
                 case INS_LDA_INDY: {
                     Byte zeroPageAddress = fetchByte(cycles, memory);
                     zeroPageAddress += Y;
                     Word effectiveAddress = readWord(cycles, zeroPageAddress, memory);
                     A = readByte(cycles, effectiveAddress, memory); 
+                    loadRegisterSetStatus(A);
                 } break;
                 case INS_JSR: {
                     Word subRutineAddress = fetchWord(cycles, memory);
